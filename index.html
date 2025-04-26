@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Constitucional Mexicano</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --color-primario: #8B0000;
+            --color-secundario: #FFD700;
+            --sombra: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', system-ui;
+            min-height: 100vh;
+        }
+
+        .menu-flotante {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 2000;
+            cursor: pointer;
+            color: var(--color-primario);
+            font-size: 2rem;
+            transition: transform 0.3s;
+        }
+
+        .menu-flotante:hover {
+            transform: scale(1.2);
+        }
+
+        .panel-lateral {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100vh;
+            background: var(--color-primario);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.2);
+            padding-top: 4rem;
+        }
+
+        .panel-lateral.activo {
+            transform: translateX(300px);
+        }
+
+        .nav-item {
+            padding: 1.2rem;
+            color: white;
+            border-bottom: 1px solid rgba(255,215,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-item:hover {
+            background: #600000;
+            transform: translateX(15px);
+        }
+
+        .contenido-principal {
+            max-width: 1200px;
+            margin: 5rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--sombra);
+        }
+
+        .articulo-legal {
+            background: #fff9f9;
+            border-left: 4px solid var(--color-primario);
+            padding: 2rem;
+            margin: 2rem 0;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .badge-constitucion {
+            background: linear-gradient(45deg, #8B0000, #600000);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .tabla-especial {
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+        
+
+        .encabezado-tabla {
+            background: var(--color-primario);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .item-tabla {
+            padding: 1.2rem;
+            border-bottom: 1px solid #dee2e6;
+            transition: background 0.2s;
+        }
+
+        .item-tabla:last-child {
+            border-bottom: none;
+        }
+
+        .item-tabla:hover {
+            background: #f8f9fa;
+        }
+
+        .card-articulo {
+            border: 2px solid var(--color-primario);
+            border-radius: 12px;
+            transition: transform 0.3s;
+        }
+
+        .card-articulo:hover {
+            transform: translateY(-5px);
+        }
+
+        .boton-inicio {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 2000;
+            background: var(--color-primario);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--sombra);
+            transition: transform 0.3s;
+        }
+
+        .boton-inicio:hover {
+            transform: scale(1.1) translateY(-5px);
+        }
+
+        @media (max-width: 768px) {
+            .contenido-principal {
+                margin: 2rem;
+                padding: 1rem;
+            }
+            
+            .panel-lateral {
+                width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <i class="bi bi-list menu-flotante" onclick="togglePanel()"></i>
+    
+    <div class="boton-inicio" onclick="volverInicio()">
+        <i class="bi bi-house-door-fill"></i>
+    </div>
+
+    <div class="panel-lateral">
+        <div class="nav-item" onclick="mostrarSeccion('presidente')">
+            <i class="bi bi-person-badge-fill"></i> Federal
+        </div>
+        <div class="nav-item" onclick="mostrarSeccion('gobernador')">
+            <i class="bi bi-building-fill"></i> Estatal
+        </div>
+        <div class="nav-item" onclick="mostrarSeccion('municipal')">
+            <i class="bi bi-house-door-fill"></i> Municipal
+        </div>
+    </div>
+
+    <div class="contenido-principal" id="contenido">
+        <h1 class="mb-4 text-center">📜 Constitución Mexicana - Poder Ejecutivo</h1>
+        <div class="alert alert-info text-center" id="vistaInicial">
+            Seleccione un nivel de gobierno del menú lateral
+        </div>
+    </div>
+
+    <script>
+        const contenidoInicial = document.getElementById('vistaInicial').outerHTML;
+
+        function volverInicio() {
+            document.getElementById('contenido').innerHTML = `
+                <h1 class="mb-4 text-center">📜 Constitución Mexicana - Poder Ejecutivo</h1>
+                ${contenidoInicial}
+            `;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function togglePanel() {
+            document.querySelector('.panel-lateral').classList.toggle('activo');
+        }
+
+        function crearTabla(items, tipo) {
+    const iconos = {
+        legales: '⚖',
+        cdmx: '🏙',
+        emergencias: '🚨',
+        general: '📋'
+    };
+    
+    return `<div class="tabla-especial">
+        <div class="encabezado-tabla">
+            ${iconos[tipo] || '📌'} ${tipo.toUpperCase()}
+        </div>
+        ${items.map(item => `<div class="item-tabla">${item}</div>`).join('')}
+    </div>`;
+}
+
+
+        const secciones = {
+            presidente: `
+                <div class="articulo-legal">
+                    <h2><span class="badge-constitucion">Título Tercero - Capítulo II</span> Presidencia de la República</h2>
+                    
+                    ${crearTabla([
+                        'Art. 80: El ejercicio del Supremo Poder Ejecutivo de la Unión se deposita en un solo individuo llamado Presidente de los Estados Unidos Mexicanos.',
+                        'Art. 82: Requisitos: ser mexicano por nacimiento, hijo de padres mexicanos, tener 35 años cumplidos, residir en México, no pertenecer al clero ni estar en servicio militar activo.',
+                        'Art. 83: El presidente dura 6 años, inicia el 1° de octubre, no hay reelección.',
+                        'Art. 84: Suplencias: renuncia, incapacidad o muerte → Congreso nombra interino o sustituto.',
+                        'Art. 85: Si falta antes de iniciar el periodo: Congreso nombra un presidente provisional.',
+                        'Art. 86: El cargo de Presidente sólo se puede renunciar por causa grave (aceptada por el Congreso).',
+                        'Art. 89: Atribuciones del Presidente: promulgar leyes, nombrar y remover funcionarios, conducir la política exterior, dirigir la fuerza armada, preservar la seguridad nacional.',
+                        'Art. 108: Definición de servidores públicos. Responsabilidades: delitos como corrupción, traición a la patria, delitos graves.'
+                    ], 'legales')}
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <div class="card card-articulo">
+                                <div class="card-body">
+                                    <h4><span class="badge-constitucion">Art. 89</span> Facultades Específicas</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Fracción V: Nombramiento ministerial</li>
+                                        <li class="list-group-item">Fracción VIII: Declaración de guerra</li>
+                                        <li class="list-group-item">Fracción XIV: Indultos presidenciales</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card card-articulo">
+                                <div class="card-body">
+                                    <h4><span class="badge-constitucion">Art. 108</span> Responsabilidades</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Juicio político por traición</li>
+                                        <li class="list-group-item">Violación de garantías</li>
+                                        <li class="list-group-item">Delitos graves del fuero común</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            gobernador: `
+                <div class="articulo-legal">
+                    <h2><span class="badge-constitucion">Artículo 116</span> Gobierno Estatal</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card card-articulo">
+                                <div class="card-body">
+                                    <h4><span class="badge-constitucion">Art. 77</span> Atribuciones</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Gabinete estatal</li>
+                                        <li class="list-group-item">Presupuesto anual</li>
+                                        <li class="list-group-item">Fuerza pública local</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            ${crearTabla([
+                                'Art. 116: Estados libres y soberanos en su régimen interior. Poderes Ejecutivo, Legislativo, Judicial locales.',
+                                'Art. 122: Régimen especial CDMX',
+                                'Art. 108: Responsabilidad común',
+                                'Art. 115: Coordinación municipal'
+                            ], 'cdmx')}
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h4><span class="badge-constitucion">Disposiciones Clave</span></h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                ${crearTabla([
+                                    'Duración: 6 años',
+                                    'Prohibición de reelección',
+                                    'Rendición de cuentas anual'
+                                ], 'general')}
+                            </div>
+                            <div class="col-md-6">
+                                ${crearTabla([
+                                    'Sustitución por TSJ estatal',
+                                    'Elecciones extraordinarias',
+                                    'Control constitucional local'
+                                ], 'general')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `,
+
+            municipal: `
+                <div class="articulo-legal">
+                    <h2><span class="badge-constitucion">Artículo 115</span> Gobierno Municipal</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            ${crearTabla([
+                                'Elección popular directa',
+                                'Periodo de 3 años',
+                                'Prohibición de reelección',
+                                'Autonomía administrativa',
+                                'Servicios públicos locales'
+                            ], 'general')}
+                            
+                            <div class="card card-articulo mt-4">
+                                <div class="card-body">
+                                    <h4><span class="badge-constitucion">Art. 134</span> Transparencia</h4>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Contrataciones públicas</li>
+                                        <li class="list-group-item">Ejercicio presupuestal</li>
+                                        <li class="list-group-item">Rendición trimestral</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            ${crearTabla([
+                                'Art. 29: Emergencias sanitarias. Sólo en casos de invasión, perturbación grave o peligro, el Presidente puede restringir derechos humanos mediante decreto aprobado por el Congreso.',
+                                'Art. 115-IV: Agua potable',
+                                'Art. 115-VII: Seguridad pública',
+                                'Art. 115-IX: Desarrollo urbano'
+                            ], 'emergencias')}
+                            
+                            <div class="card card-articulo mt-4">
+                                <div class="card-body">
+                                    <h4><span class="badge-constitucion">Estructura Orgánica</span></h4>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Ayuntamiento</li>
+                                        <li class="list-group-item">Síndico municipal</li>
+                                        <li class="list-group-item">Consejos ciudadanos</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+        };
+
+        function mostrarSeccion(seccion) {
+            document.getElementById('contenido').innerHTML = secciones[seccion];
+            togglePanel();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>
